@@ -144,11 +144,11 @@ if soru:
         try:
             # 1. Modeli ve Zinciri burada tanımlıyoruz (İçeride olmalı)
            # Bu kısım görseldeki 146-149 arasının yerine gelecek:
-        llm = ChatGoogleGenerativeAI(
-            model="gemini-1.5-flash",
-            google_api_key=kullanici_api_key,
-            client_options={"api_version": "v1"} 
-            )
+            llm = ChatGoogleGenerativeAI(
+             model="gemini-1.5-flash",
+             google_api_key=kullanici_api_key,
+             client_options={"api_version": "v1"} 
+             )
             
             sablon = "Bilgi: {c}\nSoru: {q}"
             prompt = ChatPromptTemplate.from_template(sablon)
@@ -174,6 +174,7 @@ if soru:
                 st.info("Lütfen API anahtarını ve internetinizi kontrol edin.")
 else:
         st.error("Önce dosya yükle!")
+
 
 
 
