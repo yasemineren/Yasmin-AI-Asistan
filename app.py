@@ -150,7 +150,7 @@ if soru:
                 prompt = ChatPromptTemplate.from_template(sablon)
                 zincir = prompt | llm
                 
-               try:
+    try:
     # Modelden yanıt almayı dene
     with st.spinner("Yasmin düşünüyor..."):
         cevap = zincir.invoke({"c": icerik, "q": soru})
@@ -171,6 +171,7 @@ except Exception as e:
         st.info("Lütfen API anahtarını doğru girdiğinizden ve internet bağlantınızdan emin olun.")
     else:
         st.error("Önce dosya yükle!")
+
 
 
 
