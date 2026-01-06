@@ -169,8 +169,9 @@ except Exception as e:
         st.info("İpucu: Ücretsiz kullanım kotanız dolmuş olabilir.")
     else:
         st.info("Lütfen API anahtarını doğru girdiğinizden ve internet bağlantınızdan emin olun.")
-    else:
+else:
         st.error("Önce dosya yükle!")
+
 
 
 
