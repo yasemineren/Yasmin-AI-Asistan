@@ -144,7 +144,7 @@ if soru:
         try:
             # 1. Modeli ve Zinciri burada tanımlıyoruz (İçeride olmalı)
             llm = ChatGoogleGenerativeAI(
-                model="gemini-1.5-flash",
+                model="models/gemini-1.5-flash",
                 google_api_key=kullanici_api_key
             )
             
@@ -172,6 +172,7 @@ if soru:
                 st.info("Lütfen API anahtarını ve internetinizi kontrol edin.")
 else:
         st.error("Önce dosya yükle!")
+
 
 
 
