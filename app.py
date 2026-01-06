@@ -150,11 +150,28 @@ if soru:
                 prompt = ChatPromptTemplate.from_template(sablon)
                 zincir = prompt | llm
                 
-                cevap = zincir.invoke({"c": icerik, "q": soru})
-                st.markdown(cevap.content)
-                st.session_state.msg.append({"role": "assistant", "content": cevap.content})
+               try:
+    # Modelden yanıt almayı dene
+    with st.spinner("Yasmin düşünüyor..."):
+        cevap = zincir.invoke({"c": icerik, "q": soru})
+        
+    # Yanıtı ekrana yazdır ve geçmişe ekle
+    st.markdown(cevap.content)
+    st.session_state.msg.append({"role": "assistant", "content": cevap.content})
+
+except Exception as e:
+    # Hatayı kullanıcıya göster
+    st.error(f"Bir hata oluştu: {str(e)}")
+    
+    if "API_KEY_INVALID" in str(e):
+        st.info("İpucu: Girdiğiniz Google API anahtarı geçersiz görünüyor. Lütfen anahtarınızı kontrol edin.")
+    elif "quota" in str(e).lower():
+        st.info("İpucu: Ücretsiz kullanım kotanız dolmuş olabilir.")
+    else:
+        st.info("Lütfen API anahtarını doğru girdiğinizden ve internet bağlantınızdan emin olun.")
     else:
         st.error("Önce dosya yükle!")
+
 
 
 
