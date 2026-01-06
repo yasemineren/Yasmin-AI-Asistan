@@ -141,7 +141,7 @@ if soru:
                 bulunan = db.similarity_search(soru, k=4)
                 icerik = "\n".join([b.page_content for b in bulunan])
                 
-               try:
+        try:
             # 1. Modeli ve Zinciri burada tanımlıyoruz (İçeride olmalı)
             llm = ChatGoogleGenerativeAI(
                 model="gemini-1.5-flash",
@@ -172,6 +172,7 @@ if soru:
                 st.info("Lütfen API anahtarını ve internetinizi kontrol edin.")
 else:
         st.error("Önce dosya yükle!")
+
 
 
 
