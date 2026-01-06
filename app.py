@@ -142,7 +142,7 @@ if soru:
                 icerik = "\n".join([b.page_content for b in bulunan])
                 
                 llm = ChatGoogleGenerativeAI(
-                    model="gemini-pro",
+                    model="gemini-1.5-flash",
                     google_api_key=kullanici_api_key
                 )
                 
@@ -155,5 +155,6 @@ if soru:
                 st.session_state.msg.append({"role": "assistant", "content": cevap.content})
     else:
         st.error("Önce dosya yükle!")
+
 
 
