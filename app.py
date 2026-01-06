@@ -53,7 +53,7 @@ img = "https://media.giphy.com/media/peAFQfg7Ol6IE/giphy.gif"
 h = ""
 h += "<div style='display:flex; justify-content:center; align-items:center;'>"
 h += f"<img src='{img}' style='width:120px; mix-blend-mode: screen;'>"
-h += f"<h1 style='color:{renk1}; margin:0 20px; text-align:center;'>Yasmin: Asistanın</h1>"
+h += f"<h1 style='color:{renk1}; margin:0 20px; text-align:center;'>Yasmin:Mükemmel Asistanın</h1>"
 h += f"<img src='{img}' style='width:120px; mix-blend-mode: screen; transform:scaleX(-1);'>"
 h += "</div>"
 st.markdown(h, unsafe_allow_html=True)
@@ -142,7 +142,7 @@ if soru:
                 icerik = "\n".join([b.page_content for b in bulunan])
                 
                 llm = ChatGoogleGenerativeAI(
-                    model="gemini-2.5-flash",
+                    model="gemini-1.5-flash",
                     google_api_key=kullanici_api_key
                 )
                 
@@ -155,3 +155,4 @@ if soru:
                 st.session_state.msg.append({"role": "assistant", "content": cevap.content})
     else:
         st.error("Önce dosya yükle!")
+
