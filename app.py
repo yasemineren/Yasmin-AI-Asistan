@@ -141,36 +141,38 @@ if soru:
                 bulunan = db.similarity_search(soru, k=4)
                 icerik = "\n".join([b.page_content for b in bulunan])
                 
-                llm = ChatGoogleGenerativeAI(
-                    model="gemini-1.5-flash",
-                    google_api_key=kullanici_api_key
-                )
-                
-                sablon = "Bilgi: {c}\nSoru: {q}"
-                prompt = ChatPromptTemplate.from_template(sablon)
-                zincir = prompt | llm
-                
-try:
-    # Modelden yanıt almayı dene
-    with st.spinner("Yasmin düşünüyor..."):
-        cevap = zincir.invoke({"c": icerik, "q": soru})
-        
-    # Yanıtı ekrana yazdır ve geçmişe ekle
-    st.markdown(cevap.content)
-    st.session_state.msg.append({"role": "assistant", "content": cevap.content})
+               try:
+            # 1. Modeli ve Zinciri burada tanımlıyoruz (İçeride olmalı)
+            llm = ChatGoogleGenerativeAI(
+                model="gemini-1.5-flash",
+                google_api_key=kullanici_api_key
+            )
+            
+            sablon = "Bilgi: {c}\nSoru: {q}"
+            prompt = ChatPromptTemplate.from_template(sablon)
+            zincir = prompt | llm 
 
-except Exception as e:
-    # Hatayı kullanıcıya göster
-    st.error(f"Bir hata oluştu: {str(e)}")
-    
-    if "API_KEY_INVALID" in str(e):
-        st.info("İpucu: Girdiğiniz Google API anahtarı geçersiz görünüyor. Lütfen anahtarınızı kontrol edin.")
-    elif "quota" in str(e).lower():
-        st.info("İpucu: Ücretsiz kullanım kotanız dolmuş olabilir.")
-    else:
-        st.info("Lütfen API anahtarını doğru girdiğinizden ve internet bağlantınızdan emin olun.")
+            # 2. Yanıt alma işlemi
+            with st.spinner("Yasmin düşünüyor..."):
+                cevap = zincir.invoke({"c": icerik, "q": soru})
+            
+            # 3. Sonucu ekrana basma
+            st.markdown(cevap.content)
+            st.session_state.msg.append({"role": "assistant", "content": cevap.content})
+
+        except Exception as e:
+            # Hata mesajını detaylı göster
+            st.error(f"Bir hata oluştu: {str(e)}")
+            
+            if "API_KEY_INVALID" in str(e):
+                st.info("İpucu: Girdiğiniz API anahtarı geçersiz.")
+            elif "quota" in str(e).lower():
+                st.info("İpucu: Ücretsiz kullanım kotanız dolmuş.")
+            else:
+                st.info("Lütfen API anahtarını ve internetinizi kontrol edin.")
 else:
         st.error("Önce dosya yükle!")
+
 
 
 
