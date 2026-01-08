@@ -17,7 +17,7 @@ st.markdown("""
 </style>
 """, unsafe_allow_html=True)
 
-st.markdown("<h1>✨ Yasmin: Hafızalı Asistanın ✨</h1>", unsafe_allow_html=True)
+st.markdown("<h1>✨ Yasmin: Mükemmel Asistanın ✨</h1>", unsafe_allow_html=True)
 
 # --- SOHBET GEÇMİŞİNİ BAŞLAT (HAFIZA) ---
 if "messages" not in st.session_state:
@@ -119,3 +119,4 @@ if soru:
             
         except Exception as e:
             st.error(f"Hata oluştu: {e}")
+
