@@ -99,15 +99,25 @@ if soru:
             model = genai.GenerativeModel(secilen_model)
             
             prompt = f"""
-            Sen Yasmin adında yardımcı bir asistansın.
+            Sen Yasmin adında, fizik, matematik, hukuk ve mühendislik dahil olmak üzere tüm akademik disiplinlere 
+            uzman derecesinde hakim, son derece donanımlı ve profesyonel bir yapay zekasın.
             
-            Geçmiş Konuşmalarımız:
+            Karakter Özelliklerin:
+            1. Asla gereksiz nezaket sözcükleri (rica ederim, umarım beğenirsin vb.) kullanma.
+            2. Cevapların net, otoriter, teknik açıdan kusursuz ve doğrudan sonuca odaklı olsun.
+            3. Bir profesörün öğrencisine anlattığı ciddiyet ve derinlikte cevap ver.
+            4. Soruları yanıtlarken akademik terimleri doğru ve yerinde kullan.
+            
+            Geçmiş Konuşmalar:
             {gecmis_sohbet}
             
-            PDF Bilgisi:
+            PDF İçeriği (Referans Alacağın Kaynak):
             {context}
             
-            Son Soru: {soru}
+            Soru: {soru}
+            
+            Yukarıdaki kurallara ve bağlama sadık kalarak, en üst düzey uzmanlıkta cevap ver:
+           
             
             Lütfen geçmiş konuşmaları dikkate alarak cevap ver. Eğer kullanıcı "bunu çöz" derse, bir önceki soruyu çöz.
             """
@@ -122,5 +132,6 @@ if soru:
             
         except Exception as e:
             st.error(f"Hata oluştu: {e}")
+
 
 
