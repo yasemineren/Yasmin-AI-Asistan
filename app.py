@@ -58,6 +58,11 @@ st.write("<p style='text-align: center;'>Senin için notları okurum, özetlerim
 # --- YAN MENÜ ---
 with st.sidebar:
     st.header("⚙️ Ayarlar")
+    # Kullanıcı modelini kendi seçsin
+    secilen_model = st.selectbox(
+        "Kullanılacak Model",
+        ("gemini-2.0-flash", "gemini-1.5-flash", "gemini-pro")
+    )
     api_key = st.text_input("Google API Anahtarını Gir:", type="password")
     uploaded_file = st.file_uploader("Bir PDF Dosyası Yükle", type="pdf")
     process_button = st.button("🧠 Yasmin'i Eğit")
@@ -110,7 +115,7 @@ if soru and "vs" in st.session_state:
         model = genai.GenerativeModel('gemini-2.5-flash')
         
         prompt = f"""
-        Sen Yasmin adında çok yardımsever, nazik ve zeki bir asistansın.
+        Sen Yasmin adında zeki bir asistansın.
         Öğrenciye derslerinde yardımcı oluyorsun.
         Cevap verirken samimi bir dil kullan.
         
@@ -131,3 +136,4 @@ if soru and "vs" in st.session_state:
         
     except Exception as e:
         st.error(f"Cevap veremedim: {e}")
+
