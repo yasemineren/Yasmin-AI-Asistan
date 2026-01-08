@@ -10,11 +10,23 @@ st.set_page_config(page_title="Yasmin AI", layout="wide")
 st.title("🤖 Yasmin: PDF Asistanın")
 
 # Yan Menü
+# --- YAN MENÜ (GİRİŞ) ---
 with st.sidebar:
-    st.header("Ayarlar")
-    api_key = st.text_input("Google API Anahtarını Gir:", type="password")
-    uploaded_file = st.file_uploader("PDF Dosyanı Yükle", type="pdf")
-    process_button = st.button("Öğren")
+    st.header("🔑 Giriş")
+    kullanici_api_key = st.text_input(
+        "Google API Key", 
+        type="password", 
+        help="Buraya kendi Gemini API anahtarınızı yapıştırın."
+    )
+    
+    st.divider()
+    
+    st.header("🎨 Tasarım")
+    renk1 = st.color_picker("Tema", "#d63384") 
+    renk2 = st.color_picker("Arka Plan", "#0e1117")
+    renk3 = st.color_picker("Yazı", "#fafafa")
+    st.divider()
+
 
 # Ana İşlem
 if process_button and api_key and uploaded_file:
@@ -71,3 +83,4 @@ if soru and "vs" in st.session_state:
         
     except Exception as e:
         st.error(f"Cevap üretirken hata: {e}")
+
