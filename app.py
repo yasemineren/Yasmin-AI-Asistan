@@ -1,4 +1,9 @@
 import streamlit as st
+import google.generativeai as genai
+from langchain_community.document_loaders import PyPDFLoader
+# EKSİK OLAN SATIR BURASI:
+from langchain_google_genai import GoogleGenerativeAIEmbeddings 
+from langchain_community.vectorstores import FAISS
 import os
 
 # --- AYARLAR ---
@@ -155,4 +160,5 @@ if soru:
                 st.session_state.msg.append({"role": "assistant", "content": cevap.content})
     else:
         st.error("Önce dosya yükle!")
+
 
