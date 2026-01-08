@@ -8,6 +8,10 @@ import os
 # --- SAYFA AYARLARI ---
 st.set_page_config(page_title="Yasmin AI", page_icon="🧚‍♀️", layout="wide")
 
+# --- SOHBET GEÇMİŞİNİ BAŞLAT (HAFIZA) ---
+if "messages" not in st.session_state:
+    st.session_state.messages = []
+
 # --- ÖZEL TASARIM (CSS) ---
 st.markdown("""
 <style>
@@ -136,4 +140,5 @@ if soru and "vs" in st.session_state:
         
     except Exception as e:
         st.error(f"Cevap veremedim: {e}")
+
 
