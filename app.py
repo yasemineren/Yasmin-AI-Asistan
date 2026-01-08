@@ -90,11 +90,11 @@ def kur_database(gelen_dosyalar):
     parcalayici = RecursiveCharacterTextSplitter(chunk_size=1000, chunk_overlap=100)
     parcalar = parcalayici.split_documents(docs)
     
-    embed = HuggingFaceEmbeddings(
-        model_name="all-MiniLM-L6-v2",
-        model_kwargs={'device': 'cpu'},
-        cache_folder="./hf_cache"
-    )
+    # Google'ın kendi embedding motorunu kullanıyoruz (Hata vermez)
+    embeddings = GoogleGenerativeAIEmbeddings(
+            model="models/text-embedding-004", 
+            google_api_key=api_key
+        )
     
     db = FAISS.from_documents(parcalar, embed)
     db.save_local("faiss_db")
@@ -155,3 +155,4 @@ if soru:
                 st.session_state.msg.append({"role": "assistant", "content": cevap.content})
     else:
         st.error("Önce dosya yükle!")
+
