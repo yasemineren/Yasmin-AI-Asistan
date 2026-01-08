@@ -34,10 +34,7 @@ with st.sidebar:
     st.markdown("[🔑 Anahtarın yok mu? Buradan alabilirsin](https://aistudio.google.com/app/apikey)", unsafe_allow_html=True)
     # -------------------------------------------
  # 2. Model Seçici (Arkadaşların da kullanabilsin diye)
-    secilen_model = st.selectbox(
-        "Kullanılacak Zeka Modeli",
-        ("gemini-2.5-flash", "gemini-1.5-flash", "gemini-pro")
-    )
+
     
     # 3. Dosya Yükleme
     uploaded_file = st.file_uploader("Bir PDF Dosyası Yükle", type="pdf")
@@ -132,6 +129,7 @@ if soru:
             
         except Exception as e:
             st.error(f"Hata oluştu: {e}")
+
 
 
 
