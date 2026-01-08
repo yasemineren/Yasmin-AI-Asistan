@@ -29,8 +29,11 @@ with st.sidebar:
     
     # 1. API Anahtarı
     api_key = st.text_input("Google API Anahtarını Gir:", type="password")
-    
-    # 2. Model Seçici (Arkadaşların da kullanabilsin diye)
+
+    # --- YENİ EKLENECEK KISIM (YARDIM LİNKİ) ---
+    st.markdown("[🔑 Anahtarın yok mu? Buradan alabilirsin](https://aistudio.google.com/app/apikey)", unsafe_allow_html=True)
+    # -------------------------------------------
+ # 2. Model Seçici (Arkadaşların da kullanabilsin diye)
     secilen_model = st.selectbox(
         "Kullanılacak Zeka Modeli",
         ("gemini-2.5-flash", "gemini-1.5-flash", "gemini-pro")
@@ -119,4 +122,5 @@ if soru:
             
         except Exception as e:
             st.error(f"Hata oluştu: {e}")
+
 
