@@ -39,7 +39,7 @@ with st.sidebar:
     # 2. Model Seçimi (Hatanın Çözümü Burada: Değişkeni kesin olarak tanımlıyoruz)
     secilen_model = st.selectbox(
         "Zeka Modeli Seç:",
-        ("gemini-2.0-flash", "gemini-1.5-flash", "gemini-pro"),
+        ("gemini-2.5-flash", "gemini-1.5-flash", "gemini-pro"),
         index=0
     )
     
@@ -128,3 +128,4 @@ if soru:
             
         except Exception as e:
             st.error(f"Hata: {e}")
+
