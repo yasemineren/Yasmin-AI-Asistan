@@ -6,7 +6,7 @@ from langchain_community.vectorstores import FAISS
 import os
 
 # --- SAYFA AYARLARI ---
-st.set_page_config(page_title="Yasmin AI", page_icon="🧚‍♀️", layout="wide")
+st.set_page_config(page_title="Yasmin AI", page_icon="🎓", layout="wide")
 
 # --- TASARIM (CSS) ---
 st.markdown("""
@@ -14,37 +14,44 @@ st.markdown("""
     .stApp { background: linear-gradient(to right, #141e30, #243b55); color: white; }
     h1 { text-align: center; color: #FFD700; text-shadow: 0 0 10px #FFD700; }
     .stButton>button { background-color: #FF4B4B; color: white; border-radius: 10px; width: 100%; }
+    .stChatMessage { background-color: rgba(255, 255, 255, 0.1); border-radius: 10px; }
 </style>
 """, unsafe_allow_html=True)
 
-st.markdown("<h1>✨ Yasmin: PDF Asistanın ✨</h1>", unsafe_allow_html=True)
+st.markdown("<h1>🎓 Yasmin: Akademik Asistan</h1>", unsafe_allow_html=True)
 
-# --- SOHBET GEÇMİŞİNİ BAŞLAT (HAFIZA) ---
+# --- SOHBET GEÇMİŞİNİ BAŞLAT ---
 if "messages" not in st.session_state:
     st.session_state.messages = []
 
-# --- YAN MENÜ ---
+# --- YAN MENÜ (AYARLAR) ---
 with st.sidebar:
-    st.header("⚙️ Ayarlar")
+    st.header("⚙️ Kontrol Paneli")
     
-    # 1. API Anahtarı
-    api_key = st.text_input("Google API Anahtarını Gir:", type="password")
-
-    # --- YENİ EKLENECEK KISIM (YARDIM LİNKİ) ---
-    st.markdown("[🔑 Anahtarın yok mu? Buradan alabilirsin](https://aistudio.google.com/app/apikey)", unsafe_allow_html=True)
-    # -------------------------------------------
- # 2. Model Seçici (Arkadaşların da kullanabilsin diye)
-
+    # 1. API Anahtarı (Önce Secrets'a bakar, yoksa kutu açar)
+    if "GOOGLE_API_KEY" in st.secrets:
+        api_key = st.secrets["GOOGLE_API_KEY"]
+        st.success("✅ Anahtar Sistemden Çekildi")
+    else:
+        api_key = st.text_input("Google API Anahtarını Gir:", type="password")
+        st.markdown("[🔑 Anahtar Al](https://aistudio.google.com/app/apikey)", unsafe_allow_html=True)
+    
+    # 2. Model Seçimi (Hatanın Çözümü Burada: Değişkeni kesin olarak tanımlıyoruz)
+    secilen_model = st.selectbox(
+        "Zeka Modeli Seç:",
+        ("gemini-2.0-flash", "gemini-1.5-flash", "gemini-pro"),
+        index=0
+    )
     
     # 3. Dosya Yükleme
-    uploaded_file = st.file_uploader("Bir PDF Dosyası Yükle", type="pdf")
+    uploaded_file = st.file_uploader("Ders Notu / Makale (PDF)", type="pdf")
     
     # 4. Eğit Butonu
-    if st.button("🧠 Yasmin'i Eğit"):
+    if st.button("🧠 Dokümanı Analiz Et"):
         if not api_key or not uploaded_file:
-            st.error("Lütfen önce API anahtarı ve dosya gir.")
+            st.error("Lütfen API anahtarı ve dosya eksik olmasın.")
         else:
-            with st.spinner("Dosyayı inceliyorum... 🧚‍♀️"):
+            with st.spinner("Doküman akademik seviyede inceleniyor..."):
                 try:
                     genai.configure(api_key=api_key)
                     with open("temp.pdf", "wb") as f:
@@ -60,85 +67,64 @@ with st.sidebar:
                     
                     st.session_state.vs = FAISS.from_documents(pages, embeddings)
                     st.balloons() 
-                    st.success("Hazırım! Artık sohbet edebiliriz. 🎉")
-                    # Yeni dosya yüklenince hafızayı temizle
-                    st.session_state.messages = []
+                    st.success("Analiz Tamamlandı. Yasmin sorularını bekliyor.")
+                    st.session_state.messages = [] # Yeni dosya gelince hafızayı temizle
                 except Exception as e:
-                    st.error(f"Hata: {e}")
+                    st.error(f"Sistem Hatası: {e}")
 
-# --- SOHBET GEÇMİŞİNİ EKRANA YAZDIR ---
+# --- SOHBET EKRANI ---
 for message in st.session_state.messages:
     with st.chat_message(message["role"]):
-        st.write(message["content"])
+        st.markdown(message["content"])
 
-# --- KULLANICI GİRİŞİ (CHAT INPUT) ---
-# Artık text_input yerine chat_input kullanıyoruz, bu daha modern durur
-soru = st.chat_input("Yasmin'e bir şey sor...")
+# --- KULLANICI GİRİŞİ ---
+soru = st.chat_input("Akademik sorunuzu buraya yazın...")
 
 if soru:
     if "vs" not in st.session_state:
-        st.warning("Lütfen önce sol menüden PDF yükle ve 'Eğit' butonuna bas.")
+        st.warning("Lütfen önce sol menüden PDF yükleyip analiz işlemini başlatın.")
     else:
-        # 1. Kullanıcı mesajını ekrana ve hafızaya ekle
+        # Mesajı ekle
         st.session_state.messages.append({"role": "user", "content": soru})
         with st.chat_message("user"):
-            st.write(soru)
+            st.markdown(soru)
 
-        # 2. Cevap Üret
+        # Cevap Üret
         try:
-            # Bağlamı PDF'ten çek
             docs = st.session_state.vs.similarity_search(soru, k=3)
             context = "\n".join([d.page_content for d in docs])
             
-            # Geçmiş sohbeti de modele gönderiyoruz ki "Bunu çöz" dediğinde neyi kastettiğini anlasın
             gecmis_sohbet = "\n".join([f"{msg['role']}: {msg['content']}" for msg in st.session_state.messages])
             
+            # Seçilen Modeli Tanımla (Hata burada çözülüyor)
             model = genai.GenerativeModel(secilen_model)
             
-            # --- GELİŞMİŞ AKADEMİK PROMPT ---
+            # --- PROFESÖR PROMPT (SENİN İSTEDİĞİN SERT VERSİYON) ---
             prompt = f"""
             ### ROL TANIMI
             Sen Yasmin; fizik, matematik, hukuk ve mühendislik başta olmak üzere tüm akademik disiplinlerde **kıdemli profesör** seviyesinde bilgiye sahip, otoriter ve teknik bir asistansın.
-            Amacın, öğrencinin (kullanıcının) sorularını en derin, teknik ve doğru şekilde yanıtlamaktır.
+            Amacın, öğrencinin sorularını en derin, teknik ve doğru şekilde yanıtlamaktır.
 
-            ### KATI KURALLAR (BUNLARA KESİNLİKLE UY)
-            1. **Üslup:** "Sıfır Nezaket, %100 Bilgi". Asla "Merhaba", "Rica ederim", "Umarım yardımcı olur" gibi dolgu kelimeler kullanma. Doğrudan cevaba gir.
-            2. **Matematik & Formül:** Tüm matematiksel ifadeleri ve formülleri mutlaka LaTeX formatında yaz.
-            3. **Düşünce Zinciri (CoT):** Cevabı vermeden önce, verilen bağlamı mantıksal olarak analiz et. Neden-sonuç ilişkisi kurarak açıkla.
-            4. **Bağlam Önceliği:** Cevabını öncelikle aşağıda verilen "PDF BİLGİSİ"ne dayandır. Eğer bilgi orada varsa, oradan al. Eğer PDF yetersiz kalırsa, kendi akademik uzmanlığını kullanarak konuyu açıkla (ama uydurma).
-            5. **Sohbet Hafızası:** Kullanıcı "bunu çöz" veya "bunu açıkla" gibi zamirler kullanırsa, "GEÇMİŞ KONUŞMALAR" kısmına bakarak neyi kastettiğini anla.
-
-            ### İŞLENECEK VERİLER
-            **Geçmiş Konuşmalar:**
-            {gecmis_sohbet}
-
-            **PDF Bilgisi (Birincil Kaynak):**
-            {context}
-
-            **Kullanıcı Sorusu:** {soru}
-
-            ### YANIT
+            ### KATI KURALLAR
+            1. **Üslup:** "Sıfır Nezaket, %100 Bilgi". Asla "Merhaba", "Rica ederim" kullanma. Doğrudan teknik cevaba gir.
+            2. **Matematik:** Tüm formülleri LaTeX formatında yaz (Örn: $E=mc^2$).
+            3. **Analiz:** Cevabı vermeden önce bağlamı mantıksal olarak analiz et.
+            4. **Bağlam:** Cevabını öncelikle "PDF BİLGİSİ"ne dayandır. Yetersizse akademik bilgini kullan.
             
+            ### VERİLER
+            **Geçmiş:** {gecmis_sohbet}
+            **PDF Bağlamı:** {context}
+            **Soru:** {soru}
             
-            Yukarıdaki kurallara ve bağlama sadık kalarak, en üst düzey uzmanlıkta cevap ver:
-           
-            
-            Lütfen geçmiş konuşmaları dikkate alarak cevap ver. Eğer kullanıcı "bunu çöz" derse, bir önceki soruyu çöz.
+            **YANITIN:**
             """
             
-            with st.chat_message("assistant", avatar="🧚‍♀️"):
-                with st.spinner("Yazıyorum..."):
+            with st.chat_message("assistant", avatar="🎓"):
+                with st.spinner("Analiz ediliyor..."):
                     response = model.generate_content(prompt)
-                    st.write(response.text)
+                    st.markdown(response.text)
             
-            # 3. Yasmin'in cevabını hafızaya ekle
             st.session_state.messages.append({"role": "assistant", "content": response.text})
             
         except Exception as e:
-            st.error(f"Hata oluştu: {e}")
-
-
-
-
-
-
+            st.error(f"Hata: {e}")
